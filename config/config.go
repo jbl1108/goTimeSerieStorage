@@ -1,0 +1,52 @@
+package config
+
+import (
+	"log"
+	"os"
+
+	"github.com/magiconair/properties"
+)
+
+type Config struct {
+	prop *properties.Properties
+}
+
+const CONFIG_FILE = "config.conf"
+
+func NewConfig() *Config {
+	c := new(Config)
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	configPath := dir + "/" + CONFIG_FILE
+	log.Printf("Loading config file from %s", configPath)
+	c.prop, err = properties.LoadFile(configPath, properties.UTF8)
+	if err != nil {
+		log.Printf("Failed to load config file: %v. Using default values.", err)
+		c.prop = properties.NewProperties()
+	}
+
+	return c
+}
+
+func (config *Config) MQTTAddress() string {
+	return config.prop.GetString("mqtt_address", "localhost:1883")
+}
+func (config *Config) MQTTUsername() string {
+	return config.prop.GetString("mqtt_username", "mqtt-user")
+}
+func (config *Config) MQTTPassword() string {
+	return config.prop.GetString("mqtt_password", "mqtt-password")
+}
+
+func (config *Config) InfluxDBURL() string {
+	return config.prop.GetString("influxdb_url", "http://localhost:8086")
+}
+func (config *Config) InfluxDBToken() string {
+	return config.prop.GetString("influxdb_token", "tzhe2Ax2rtX07xyyXP_BcRtZYEftw9sCgMtS3qFnuSJ93PkFqEnRlzH1_rxst_esEwaAShMX31WDsRnz7KrTww==")
+}
+func (config *Config) InfluxDBOrg() string {
+	return config.prop.GetString("influxdb_org", "my-org")
+}
