@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/magiconair/properties"
 )
@@ -31,22 +32,27 @@ func NewConfig() *Config {
 	return c
 }
 
+func sanitize(s string) string {
+	// trim spaces and tabs
+	return strings.TrimSpace(s)
+}
+
 func (config *Config) MQTTAddress() string {
-	return config.prop.GetString("mqtt_address", "localhost:1883")
+	return sanitize(config.prop.GetString("mqtt_address", "localhost:1883"))
 }
 func (config *Config) MQTTUsername() string {
-	return config.prop.GetString("mqtt_username", "mqtt-user")
+	return sanitize(config.prop.GetString("mqtt_username", "mqtt-user"))
 }
 func (config *Config) MQTTPassword() string {
-	return config.prop.GetString("mqtt_password", "mqtt-password")
+	return sanitize(config.prop.GetString("mqtt_password", "mqtt-password"))
 }
 
 func (config *Config) InfluxDBURL() string {
-	return config.prop.GetString("influxdb_url", "http://localhost:8086")
+	return sanitize(config.prop.GetString("influxdb_url", "http://localhost:8086"))
 }
 func (config *Config) InfluxDBToken() string {
-	return config.prop.GetString("influxdb_token", "tzhe2Ax2rtX07xyyXP_BcRtZYEftw9sCgMtS3qFnuSJ93PkFqEnRlzH1_rxst_esEwaAShMX31WDsRnz7KrTww==")
+	return sanitize(config.prop.GetString("influxdb_token", "tzhe2Ax2rtX07xyyXP_BcRtZYEftw9sCgMtS3qFnuSJ93PkFqEnRlzH1_rxst_esEwaAShMX31WDsRnz7KrTww=="))
 }
 func (config *Config) InfluxDBOrg() string {
-	return config.prop.GetString("influxdb_org", "my-org")
+	return sanitize(config.prop.GetString("influxdb_org", "my-org"))
 }
