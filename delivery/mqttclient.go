@@ -21,6 +21,8 @@ func NewMQTTClient(broker string, username string, password string, topic string
 	opts.SetUsername(username)
 	opts.SetPassword(password)
 	opts.SetDefaultPublishHandler(defaultMessageHandler)
+	opts.SetAutoReconnect(true)
+	opts.SetConnectionLostHandler(mqtt.DefaultConnectionLostHandler)
 	client := mqtt.NewClient(opts)
 	return &MQTTClient{client: client, topic: topic, inputUsecase: inputUsecase}
 }
@@ -30,6 +32,8 @@ func defaultMessageHandler(client mqtt.Client, msg mqtt.Message) {
 }
 
 func (m *MQTTClient) Connect() {
+	reader := m.client.OptionsReader()
+	log.Printf("Connecting to MQTT broker at: %v", reader.Servers())
 	if token := m.client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatal(token.Error())
 	}
